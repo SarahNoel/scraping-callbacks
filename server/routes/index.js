@@ -23,16 +23,16 @@ router.get('/newsies', function(req, res, next){
           if (!error && response.statusCode == 200) {
             var reddit = checkFor(html, 'span.domain', 'JavaScript');
             if(reddit){
-              getSite(mdnjs, 'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png', res);
+              getSite(mdnjs,  res, 'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png');
             }
             else{
-              getSite(python, 'https://www.python.org/static/img/python-logo.png', res);
+              getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
             }
           }
         });
       }
       else{
-        getSite(python, 'https://www.python.org/static/img/python-logo.png', res);
+        getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
       }
     }
   });
@@ -43,9 +43,10 @@ module.exports = router;
 
 
 //helper functions
-function getSite(url, img, res){
+function getSite(url, res, img){
   request(url, function (error, response, html) {
       if (!error && response.statusCode == 200) {
+        var $ = cheerio.load(html);
         res.json({url:url, html:html, img:img});
       }
   });
@@ -61,7 +62,7 @@ function checkFor(html, className, lookingFor){
     var title = a.text();
     // data store in an object (for dumping to mongo)
 
-    var titleArr = scrapedData.title.split(' ');
+    var titleArr = title.split(' ');
     for (var j = 0; j < titleArr.length; j++) {
       if (titleArr[j].trim().toUpperCase() === lookingFor.toUpperCase()){
         allTitles.push(scrapedData.title);
