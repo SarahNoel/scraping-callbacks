@@ -26,7 +26,7 @@ promise.then(function(result){
   console.log("Error!: ", error);
 });
 
-// //with .catch
+//with .catch
 promise.then(function(result){
   console.log("Result: ", result);
 })
@@ -34,33 +34,43 @@ promise.then(function(result){
   console.log("Error!: ", result);
 });
 
-// //passing in functions
-// promise.then(successFn, errorFn);
+//passing in functions
+promise.then(successFn, errorFn);
 
-// //chaining promises
+//chaining promises
 
-// promise.then(successFn, errorFn).
-//         then(function(result){
-//           result += '!!!!!!';
-//           console.log(result);
-//           return result;
-//         });
+//return persists data between .then() statements
+promise.then(function(result){
+          result += '!!!!!!';
+          console.log(result);
+          return result;
+        })
+        .then(function(result){
+          result += '??????';
+          console.log(result);
+          return result;
+        })
+        .then(function(result){
+          result += ';eosghir;aseogirh';
+          console.log(result);
+          return result;
+        });
 
-// var promise2 = new Promise(function(resolve, reject){
-//   if(ourResult){
-//     resolve(10);
-//   }
-//   else{
-//     reject (':(');
-//   }
-// });
+var promise2 = new Promise(function(resolve, reject){
+  if(ourResult){
+    resolve(10);
+  }
+  else{
+    reject (':(');
+  }
+});
 
-// promise2.then(successFn, errorFn).
-//         then(function(result){
-//           var product = result * 10;
-//           console.log('Multiply by 10: ', product);
-//           return product;
-//         });
+promise2.then(successFn, errorFn).
+        then(function(result){
+          var product = result * 10;
+          console.log('Multiply by 10: ', product);
+          return product;
+        });
 
 var promise3 = new Promise(function(resolve, reject){
   if(ourResult){

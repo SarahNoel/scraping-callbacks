@@ -66,7 +66,7 @@ module.exports = router;
 var hackerPromise = new Promise(function(resolve, reject){
   request(hackerNews, function(error, response, html){
     if (!error && response.statusCode == 200){
-      var hacker = checkFor(html, 'span.comhead', 'JavaScript');
+      var hacker = checkFor(html, 'span.comhead', 'twitch');
       if(hacker){
         resolve(html);
       }
