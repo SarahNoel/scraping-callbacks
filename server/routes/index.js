@@ -1,4 +1,3 @@
-var csv = require('csv');
 var express = require('express');
 var router = express.Router();
 var request = require('request');
@@ -13,33 +12,90 @@ var redditSite = 'https://www.reddit.com/r/Web_Development/';
 var mdnjs = 'https://developer.mozilla.org/en-US/docs/Web/JavaScript';
 var python = 'https://www.python.org/';
 
+// NESTED
+// router.get('/newsies', function(req, res, next){
+//   request(hackerNews, function(error, response, html){
+//     if (!error && response.statusCode == 200) {
+//       var hacker = checkFor(html, 'span.comhead', 'JavaScript');
+//       if(hacker){
+//         request(redditSite, function(error, response, html){
+//           if (!error && response.statusCode == 200) {
+//             var reddit = checkFor(html, 'span.domain', 'JavaScript');
+//             if(reddit){
+//               getSite(mdnjs,  res, 'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png');
+//             }
+//             else{
+//               getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
+//             }
+//           }
+//         });
+//       }
+//       else{
+//         getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
+//       }
+//     }
+//   });
+// });
 
+//promises
 router.get('/newsies', function(req, res, next){
+
+  hackerPromise.then(function(data){
+  })
+  .then(function(data){
+    redditPromise.then(function(data){
+      getSite(mdnjs,  res, 'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png');
+    })
+    .catch(function(err){
+      getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
+    });
+  })
+  .catch(function(err){
+    getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
+  });
+
+});
+
+
+module.exports = router;
+
+
+
+
+//helperssss
+var hackerPromise = new Promise(function(resolve, reject){
   request(hackerNews, function(error, response, html){
-    if (!error && response.statusCode == 200) {
+    if (!error && response.statusCode == 200){
       var hacker = checkFor(html, 'span.comhead', 'JavaScript');
       if(hacker){
-        request(redditSite, function(error, response, html){
-          if (!error && response.statusCode == 200) {
-            var reddit = checkFor(html, 'span.domain', 'JavaScript');
-            if(reddit){
-              getSite(mdnjs,  res, 'https://mdn.mozillademos.org/files/6457/mdn_logo_only_color.png');
-            }
-            else{
-              getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
-            }
-          }
-        });
+        resolve(html);
       }
       else{
-        getSite(python, res, 'https://www.python.org/static/img/python-logo.png');
+        reject (':(');
       }
+    }
+    else{
+      reject (':(');
     }
   });
 });
 
-module.exports = router;
-
+var redditPromise = new Promise(function(resolve, reject){
+  request(redditSite, function(error, response, html){
+    if (!error && response.statusCode == 200){
+      var reddit = checkFor(html, 'span.domain', 'JavaScript');
+      if(reddit){
+        resolve(html);
+      }
+      else{
+        reject (':(');
+      }
+    }
+    else{
+      reject (':(');
+    }
+  });
+});
 
 
 //helper functions
@@ -65,14 +121,16 @@ function checkFor(html, className, lookingFor){
     var titleArr = title.split(' ');
     for (var j = 0; j < titleArr.length; j++) {
       if (titleArr[j].trim().toUpperCase() === lookingFor.toUpperCase()){
-        allTitles.push(scrapedData.title);
+        allTitles.push(title);
       }
     }
   });
 
   if(allTitles.length > 0){
+    console.log(allTitles);
     return true;
   }
+  console.log('NOTHING FOR YOU');
   return false;
 }
 
